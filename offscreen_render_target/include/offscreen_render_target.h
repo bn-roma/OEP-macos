@@ -22,6 +22,7 @@ namespace bnb
         ~offscreen_render_target();
 
         void init() override;
+        void deinit() override;
 
         void surface_changed(int32_t width, int32_t height) override;
 

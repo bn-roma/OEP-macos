@@ -221,14 +221,7 @@ namespace bnb
         : m_width(width)
         , m_height(height) {}
 
-    offscreen_render_target::~offscreen_render_target()
-    {
-        if (m_videoTextureCache) {
-            CFRelease(m_videoTextureCache);
-        }
-        cleanupRenderBuffers();
-        destroyContext();
-    }
+    offscreen_render_target::~offscreen_render_target() {}
 
     void offscreen_render_target::cleanupRenderBuffers()
     {
@@ -279,6 +272,20 @@ namespace bnb
         m_frameSurfaceHandler = std::make_unique<ort_frame_surface_handler>(bnb::camera_orientation::deg_0, false);
     }
 
+    void offscreen_render_target::deinit(){
+        activate_context();
+        
+        m_program.reset();
+        m_frameSurfaceHandler.reset();
+        if (m_videoTextureCache) {
+            CFRelease(m_videoTextureCache);
+            m_videoTextureCache = nullptr;
+        }
+        cleanupRenderBuffers();
+        
+        destroyContext();
+    }
+
     void offscreen_render_target::createContext()
     {
         if (m_GLContext != nil) {
@@ -323,7 +330,6 @@ namespace bnb
     {
         if ([NSOpenGLContext currentContext] == m_GLContext) {
             [NSOpenGLContext clearCurrentContext];
-            m_GLContext = nil;
         }
     }
 
